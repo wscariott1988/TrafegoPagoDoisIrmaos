@@ -646,6 +646,59 @@ Quero saber os próximos passos para anunciar em Dois Irmãos!`;
             nextScreen('screen-welcome');
         }
 
+        // Função para enviar dados ao Google Sheets
+        async function sendToGoogleSheets(score) {
+            // IMPORTANTE: Substitua pela URL do seu Web App do Google Sheets
+            // Deixe vazio ('') se ainda não configurou
+            const GOOGLE_SHEETS_URL = '';
+            
+            // Se não configurou a URL, apenas loga no console e continua
+            if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === 'COLE_AQUI_A_URL_DO_SEU_WEB_APP') {
+                console.log('Google Sheets não configurado. Dados não serão salvos.');
+                console.log('Dados do lead:', {
+                    nome: userData.name,
+                    whatsapp: userData.phone,
+                    negocio: userData.business,
+                    pontuacao: score
+                });
+                return;
+            }
+            
+            const data = {
+                timestamp: new Date().toLocaleString('pt-BR'),
+                nome: userData.name,
+                whatsapp: userData.phone,
+                negocio: userData.business,
+                pontuacao: score,
+                status: score >= 8 ? 'PRONTO' : score >= 5 ? 'QUASE LÁ' : 'PRECISA ESTRUTURAR',
+                q1_whatsapp_rapido: answers[0] ? 'SIM' : 'NÃO',
+                q2_fotos_profissionais: answers[1] ? 'SIM' : 'NÃO',
+                q3_instagram_ativo: answers[2] ? 'SIM' : 'NÃO',
+                q4_sabe_lucro: answers[3] ? 'SIM' : 'NÃO',
+                q5_diferencial_claro: answers[4] ? 'SIM' : 'NÃO',
+                q6_depoimentos: answers[5] ? 'SIM' : 'NÃO',
+                q7_capacidade_atender: answers[6] ? 'SIM' : 'NÃO',
+                q8_oferta_irresistivel: answers[7] ? 'SIM' : 'NÃO',
+                q9_cliente_ideal: answers[8] ? 'SIM' : 'NÃO',
+                q10_tempo_acompanhar: answers[9] ? 'SIM' : 'NÃO'
+            };
+
+            try {
+                await fetch(GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                console.log('Dados enviados para Google Sheets com sucesso!');
+            } catch (error) {
+                console.error('Erro ao enviar dados para Google Sheets:', error);
+                // Continua mesmo se houver erro
+            }
+        }
+
         // Validação em tempo real
         document.getElementById('btnStart')?.addEventListener('click', startQuiz);
     </script>
