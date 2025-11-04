@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Seu negócio está pronto para Tráfego Pago?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #1e3a8a;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        h2 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #1e3a8a, #2563eb);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .question-number {
+            color: #2563eb;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .question-description {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .option.selected {
+            border-color: #2563eb;
+            background: #2563eb;
+            color: white;
+        }
+
+        .option.yes {
+            color: #059669;
+        }
+
+        .option.yes.selected {
+            background: #059669;
+            border-color: #059669;
+            color: white;
+        }
+
+        .option.no {
+            color: #dc2626;
+        }
+
+        .option.no.selected {
+            background: #dc2626;
+            border-color: #dc2626;
+            color: white;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-whatsapp:hover {
+            background: #1fb855;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 5px solid #2563eb;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .result-card.excellent {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-color: #059669;
+        }
+
+        .result-card.good {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border-color: #f59e0b;
+        }
+
+        .result-card.poor {
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+            border-color: #dc2626;
+        }
+
+        .score {
+            font-size: 72px;
+            font-weight: 900;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .result-card.excellent .score {
+            background: linear-gradient(135deg, #059669, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-card.good .score {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-card.poor .score {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .result-description {
+            font-size: 16px;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .checklist {
+            text-align: left;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 15px;
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .question-text {
+                font-size: 18px;
+            }
+
+            .options {
+                flex-direction: column;
+            }
+
+            .score {
+                font-size: 56px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- TELA 1: BEM-VINDO -->
+        <div class="screen active" id="screen-welcome">
+            <div class="logo">
+                <h1>Tráfego Pago Dois Irmãos</h1>
+                <p>@trafego.doisirmaos</p>
+            </div>
+            <div class="icon">🎯</div>
+            <h2>Seu negócio está pronto para anunciar online?</h2>
+            <p class="subtitle">Descubra em 2 minutos se você vai ter resultados ou vai queimar dinheiro com anúncios.</p>
+            <div class="checklist">
+                <div class="checklist-item">✅ 10 perguntas rápidas</div>
+                <div class="checklist-item">✅ Resultado personalizado na hora</div>
+                <div class="checklist-item">✅ Recomendações práticas</div>
+                <div class="checklist-item">✅ 100% gratuito</div>
+            </div>
+            <button class="btn btn-primary" onclick="nextScreen('screen-info')">Começar Agora →</button>
+        </div>
+
+        <!-- TELA 2: COLETA DE DADOS -->
+        <div class="screen" id="screen-info">
+            <div class="logo">
+                <h1>Tráfego Pago Dois Irmãos</h1>
+            </div>
+            <h2>Antes de começar, me conta sobre você:</h2>
+            <p class="subtitle">Seus dados estão 100% seguros e não serão compartilhados.</p>
+            
+            <div class="input-group">
+                <label>Seu nome:</label>
+                <input type="text" id="userName" placeholder="João Silva" required>
+            </div>
+
+            <div class="input-group">
+                <label>WhatsApp (com DDD):</label>
+                <input type="tel" id="userPhone" placeholder="51999999999" required>
+            </div>
+
+            <div class="input-group">
+                <label>Tipo de negócio:</label>
+                <select id="userBusiness" required>
+                    <option value="">Selecione...</option>
+                    <option value="Restaurante/Bar/Café">Restaurante/Bar/Café</option>
+                    <option value="Salão/Estética">Salão/Estética/Barbearia</option>
+                    <option value="Academia/Fitness">Academia/Crossfit/Pilates</option>
+                    <option value="Loja Física">Loja Física (roupas, calçados)</option>
+                    <option value="E-commerce">E-commerce/Loja Online</option>
+                    <option value="Serviços Profissionais">Serviços (contador, advogado)</option>
+                    <option value="Clínica/Consultório">Clínica/Consultório</option>
+                    <option value="Imobiliária">Imobiliária/Corretora</option>
+                    <option value="Autoescola/Cursos">Autoescola/Cursos</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" onclick="startQuiz()" id="btnStart">Continuar →</button>
+        </div>
+
+        <!-- TELAS 3-12: PERGUNTAS (serão geradas dinamicamente) -->
+        <div class="screen" id="screen-questions">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="question-number" id="questionNumber"></div>
+            <div class="question-text" id="questionText"></div>
+            <div class="question-description" id="questionDescription"></div>
+            <div class="options">
+                <div class="option yes" onclick="selectAnswer(true)">
+                    <div style="font-size: 32px; margin-bottom: 10px;">✓</div>
+                    Sim
+                </div>
+                <div class="option no" onclick="selectAnswer(false)">
+                    <div style="font-size: 32px; margin-bottom: 10px;">✗</div>
+                    Não
+                </div>
+            </div>
+        </div>
+
+        <!-- TELA 13: RESULTADO -->
+        <div class="screen" id="screen-result">
+            <div class="logo">
+                <h1>Seu Resultado</h1>
+            </div>
+            <div class="result-card" id="resultCard">
+                <div class="icon" id="resultIcon"></div>
+                <div class="score" id="resultScore"></div>
+                <div class="result-title" id="resultTitle"></div>
+                <div class="result-description" id="resultDescription"></div>
+            </div>
+            <div class="checklist" id="nextSteps"></div>
+            <button class="btn btn-whatsapp" onclick="sendWhatsApp()">
+                <span style="font-size: 24px;">📱</span>
+                Falar com Willian Agora
+            </button>
+            <button class="btn btn-primary" onclick="restart()" style="margin-top: 15px; background: #64748b;">
+                Fazer Novamente
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Seu WhatsApp Business responde em menos de 1 hora?",
+                description: "Durante horário comercial, você ou sua equipe respondem rapidamente as mensagens."
+            },
+            {
+                question: "Você tem fotos profissionais dos produtos/serviços?",
+                description: "Imagens com boa iluminação, foco correto e que transmitem profissionalismo."
+            },
+            {
+                question: "Seu Instagram/Facebook tem pelo menos 9 posts publicados?",
+                description: "Perfil ativo e atualizado, não parece abandonado."
+            },
+            {
+                question: "Você sabe EXATAMENTE quanto lucra por venda?",
+                description: "Conhece seus custos e margem de lucro para calcular quanto pode investir."
+            },
+            {
+                question: "Tem um diferencial claro da concorrência?",
+                description: "Consegue explicar em uma frase por que alguém deveria escolher você."
+            },
+            {
+                question: "Seu perfil/site tem depoimentos de clientes?",
+                description: "Prova social que gera confiança em quem ainda não te conhece."
+            },
+            {
+                question: "Você consegue atender MAIS clientes hoje se aparecerem?",
+                description: "Tem capacidade operacional para o aumento de demanda."
+            },
+            {
+                question: "Tem uma oferta irresistível para primeira compra?",
+                description: "Desconto, brinde ou condição especial para converter novos clientes."
+            },
+            {
+                question: "Sabe quem é seu cliente ideal (idade, bairro, renda)?",
+                description: "Conhece o perfil de quem mais compra de você."
+            },
+            {
+                question: "Tem tempo para acompanhar resultados semanalmente?",
+                description: "Consegue dedicar ao menos 1 hora por semana para analisar métricas."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+        let userData = {};
+
+        function nextScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startQuiz() {
+            const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            const business = document.getElementById('userBusiness').value;
+
+            if (!name || !phone || !business) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
+
+            userData = { name, phone, business };
+            currentQuestion = 0;
+            answers = [];
+            showQuestion();
+            nextScreen('screen-questions');
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('questionNumber').textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('questionDescription').textContent = q.description;
+            
+            // Remove seleção anterior
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+        }
+
+        function selectAnswer(answer) {
+            answers.push(answer);
+            
+            // Feedback visual
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.transform = 'scale(0.95)';
+                setTimeout(() => opt.style.transform = 'scale(1)', 200);
+            });
+
+            setTimeout(() => {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            }, 400);
+        }
+
+        function showResult() {
+            const score = answers.filter(a => a === true).length;
+            const resultCard = document.getElementById('resultCard');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultScore = document.getElementById('resultScore');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDescription = document.getElementById('resultDescription');
+            const nextSteps = document.getElementById('nextSteps');
+
+            // Enviar dados para Google Sheets
+            sendToGoogleSheets(score);
+
+            resultScore.textContent = `${score}/10`;
+
+            if (score >= 8) {
+                resultCard.className = 'result-card excellent';
+                resultIcon.textContent = '🎉';
+                resultTitle.textContent = 'PRONTO PARA DECOLAR!';
+                resultDescription.innerHTML = `
+                    <strong>Parabéns, ${userData.name}!</strong><br><br>
+                    Seu negócio está estruturado e preparado para tráfego pago. 
+                    Você tem grandes chances de ter um ROI positivo desde o primeiro mês.
+                `;
+                nextSteps.innerHTML = `
+                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 15px; font-size: 18px;">Próximos passos:</div>
+                    <div class="checklist-item">✅ Definir orçamento mensal de anúncios</div>
+                    <div class="checklist-item">✅ Criar campanhas estratégicas</div>
+                    <div class="checklist-item">✅ Começar a anunciar AGORA</div>
+                    <div class="checklist-item">✅ Acompanhar métricas semanalmente</div>
+                `;
+            } else if (score >= 5) {
+                resultCard.className = 'result-card good';
+                resultIcon.textContent = '⚠️';
+                resultTitle.textContent = 'VOCÊ ESTÁ QUASE LÁ!';
+                resultDescription.innerHTML = `
+                    <strong>Boa notícia, ${userData.name}!</strong><br><br>
+                    Você está no caminho certo, mas ainda tem alguns pontos críticos para ajustar. 
+                    Com pequenos ajustes, você terá resultados incríveis.
+                `;
+                nextSteps.innerHTML = `
+                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 15px; font-size: 18px;">Próximos passos:</div>
+                    <div class="checklist-item">⚠️ Revisar os itens que você marcou "NÃO"</div>
+                    <div class="checklist-item">⚠️ Priorizar os 3 mais importantes</div>
+                    <div class="checklist-item">⚠️ Estruturar nas próximas 2 semanas</div>
+                    <div class="checklist-item">✅ Depois começar a anunciar</div>
+                `;
+            } else {
+                resultCard.className = 'result-card poor';
+                resultIcon.textContent = '📋';
+                resultTitle.textContent = 'VAMOS ESTRUTURAR PRIMEIRO!';
+                resultDescription.innerHTML = `
+                    <strong>${userData.name}, não desanime!</strong><br><br>
+                    Seu negócio ainda não está pronto para tráfego pago. Se começar agora, 
+                    você vai queimar dinheiro. Mas posso te ajudar a estruturar!
+                `;
+                nextSteps.innerHTML = `
+                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 15px; font-size: 18px;">Próximos passos:</div>
+                    <div class="checklist-item">❌ NÃO invista em anúncios ainda</div>
+                    <div class="checklist-item">📋 Use o checklist como plano de ação</div>
+                    <div class="checklist-item">🎯 Trabalhe 1 item por semana</div>
+                    <div class="checklist-item">✅ Em 2-3 meses estará pronto para decolar</div>
+                `;
+            }
+
+            nextScreen('screen-result');
+        }
+
+        function sendWhatsApp() {
+            const score = answers.filter(a => a === true).length;
+            let status = score >= 8 ? 'PRONTO' : score >= 5 ? 'QUASE LÁ' : 'PRECISO ESTRUTURAR';
+            
+            const message = `Oi Willian! Fiz o checklist de Tráfego Pago.
+
+📊 Minha pontuação: ${score}/10
+🏢 Negócio: ${userData.business}
+📍 Status: ${status}
+
+Quero saber os próximos passos para anunciar em Dois Irmãos!`;
+
+            const whatsappURL = `https://wa.me/5551999402810?text=${encodeURIComponent(message)}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        function restart() {
+            currentQuestion = 0;
+            answers = [];
+            userData = {};
+            document.getElementById('userName').value = '';
+            document.getElementById('userPhone').value = '';
+            document.getElementById('userBusiness').value = '';
+            nextScreen('screen-welcome');
+        }
+
+        // Validação em tempo real
+        document.getElementById('btnStart')?.addEventListener('click', startQuiz);
+    </script>
+</body>
+</html>
