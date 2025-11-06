@@ -409,7 +409,7 @@
             <button class="btn btn-primary" onclick="startQuiz()" id="btnStart">Continuar →</button>
         </div>
 
-        <!-- TELAS 3-12: PERGUNTAS (serão geradas dinamicamente) -->
+        <!-- TELAS 3-12: PERGUNTAS -->
         <div class="screen" id="screen-questions">
             <div class="progress-bar">
                 <div class="progress-fill" id="progressBar"></div>
@@ -452,6 +452,31 @@
     </div>
 
     <script>
+        // ============================================
+        // CONFIGURAÇÃO DO GOOGLE FORMS - JÁ CONFIGURADO!
+        // ============================================
+        const GOOGLE_FORMS_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScFc_KOTWXNbXXF7Ygke0GknGfFKepW0tAY86he9vMREhA5FA/formResponse';
+        
+        // IDs dos campos do formulário
+        const FORM_FIELDS = {
+            nome: 'entry.1332254832',
+            whatsapp: 'entry.1683986737',
+            negocio: 'entry.1728880476',
+            pontuacao: 'entry.515979609',
+            status: 'entry.1684398726',
+            q1: 'entry.1877650085',
+            q2: 'entry.1466002601',
+            q3: 'entry.1025550706',
+            q4: 'entry.1539012452',
+            q5: 'entry.2011726212',
+            q6: 'entry.1634825956',
+            q7: 'entry.335359485',
+            q8: 'entry.1218388083',
+            q9: 'entry.1583223949',
+            q10: 'entry.1904069476'
+        };
+        // ============================================
+
         const questions = [
             {
                 question: "Seu WhatsApp Business responde em menos de 1 hora?",
@@ -530,14 +555,12 @@
             document.getElementById('questionText').textContent = q.question;
             document.getElementById('questionDescription').textContent = q.description;
             
-            // Remove seleção anterior
             document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
         }
 
         function selectAnswer(answer) {
             answers.push(answer);
             
-            // Feedback visual
             document.querySelectorAll('.option').forEach(opt => {
                 opt.style.transform = 'scale(0.95)';
                 setTimeout(() => opt.style.transform = 'scale(1)', 200);
@@ -562,8 +585,8 @@
             const resultDescription = document.getElementById('resultDescription');
             const nextSteps = document.getElementById('nextSteps');
 
-            // Enviar dados para Google Sheets
-            sendToGoogleSheets(score);
+            // Envia dados para Google Forms
+            sendToGoogleForms(score);
 
             resultScore.textContent = `${score}/10`;
 
@@ -620,6 +643,62 @@
             nextScreen('screen-result');
         }
 
+        function sendToGoogleForms(score) {
+            try {
+                const status = score >= 8 ? 'PRONTO' : score >= 5 ? 'QUASE LÁ' : 'PRECISA ESTRUTURAR';
+                
+                // Cria URL com todos os dados
+                const formData = new URLSearchParams();
+                formData.append(FORM_FIELDS.nome, userData.name);
+                formData.append(FORM_FIELDS.whatsapp, userData.phone);
+                formData.append(FORM_FIELDS.negocio, userData.business);
+                formData.append(FORM_FIELDS.pontuacao, score);
+                formData.append(FORM_FIELDS.status, status);
+                formData.append(FORM_FIELDS.q1, answers[0] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q2, answers[1] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q3, answers[2] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q4, answers[3] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q5, answers[4] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q6, answers[5] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q7, answers[6] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q8, answers[7] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q9, answers[8] ? 'SIM' : 'NÃO');
+                formData.append(FORM_FIELDS.q10, answers[9] ? 'SIM' : 'NÃO');
+
+                // Envia via iframe (método que sempre funciona com Google Forms)
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.name = 'hidden-form';
+                document.body.appendChild(iframe);
+
+                const form = document.createElement('form');
+                form.target = 'hidden-form';
+                form.method = 'POST';
+                form.action = GOOGLE_FORMS_URL;
+
+                formData.forEach((value, key) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = value;
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+
+                // Limpa depois de 2 segundos
+                setTimeout(() => {
+                    document.body.removeChild(form);
+                    document.body.removeChild(iframe);
+                }, 2000);
+
+                console.log('✅ Dados enviados para Google Forms com sucesso!');
+            } catch (error) {
+                console.error('❌ Erro ao enviar dados:', error);
+            }
+        }
+
         function sendWhatsApp() {
             const score = answers.filter(a => a === true).length;
             let status = score >= 8 ? 'PRONTO' : score >= 5 ? 'QUASE LÁ' : 'PRECISO ESTRUTURAR';
@@ -645,61 +724,6 @@ Quero saber os próximos passos para anunciar em Dois Irmãos!`;
             document.getElementById('userBusiness').value = '';
             nextScreen('screen-welcome');
         }
-
-        // Função para enviar dados ao Google Sheets
-        async function sendToGoogleSheets(score) {
-            // IMPORTANTE: Substitua pela URL do seu Web App do Google Sheets
-            // Deixe vazio ('') se ainda não configurou
-            const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwZGp1VEQcO-HtHRYYjGp1VO7SI60t-AUj-iBjaVFqOLetGKsZg7iqwa_xvjugeaKsNlA/exec';
-            
-            // Se não configurou a URL, apenas loga no console e continua
-            if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === 'https://script.google.com/macros/s/AKfycbwZGp1VEQcO-HthRYYjGpIVO7Sl6Ot-AUj-iBjaVFqOLeT6KsZg71qwa_xyiugeaKsNlA/exec') {
-                console.log('Google Sheets não configurado. Dados não serão salvos.');
-                console.log('Dados do lead:', {
-                    nome: userData.name,
-                    whatsapp: userData.phone,
-                    negocio: userData.business,
-                    pontuacao: score
-                });
-                return;
-            }
-            
-            const data = {
-                timestamp: new Date().toLocaleString('pt-BR'),
-                nome: userData.name,
-                whatsapp: userData.phone,
-                negocio: userData.business,
-                pontuacao: score,
-                status: score >= 8 ? 'PRONTO' : score >= 5 ? 'QUASE LÁ' : 'PRECISA ESTRUTURAR',
-                q1_whatsapp_rapido: answers[0] ? 'SIM' : 'NÃO',
-                q2_fotos_profissionais: answers[1] ? 'SIM' : 'NÃO',
-                q3_instagram_ativo: answers[2] ? 'SIM' : 'NÃO',
-                q4_sabe_lucro: answers[3] ? 'SIM' : 'NÃO',
-                q5_diferencial_claro: answers[4] ? 'SIM' : 'NÃO',
-                q6_depoimentos: answers[5] ? 'SIM' : 'NÃO',
-                q7_capacidade_atender: answers[6] ? 'SIM' : 'NÃO',
-                q8_oferta_irresistivel: answers[7] ? 'SIM' : 'NÃO',
-                q9_cliente_ideal: answers[8] ? 'SIM' : 'NÃO',
-                q10_tempo_acompanhar: answers[9] ? 'SIM' : 'NÃO'
-            };
-
-            try {
-                await fetch(GOOGLE_SHEETS_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
-                console.log('Dados enviados para Google Sheets com sucesso!');
-            } catch (error) {
-                console.error('Erro ao enviar dados para Google Sheets:', error);
-                // Continua mesmo se houver erro
-            }
-        }
-
-        // Validação em tempo real
-        document.getElementById('btnStart')?.addEventListener('click', startQuiz);
     </script>
 </body>
 </html>
