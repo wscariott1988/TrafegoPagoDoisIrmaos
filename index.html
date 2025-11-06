@@ -457,23 +457,21 @@
         // ============================================
         const GOOGLE_FORMS_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScFc_KOTWXNbXXF7Ygke0GknGfFKepW0tAY86he9vMREhA5FA/formResponse';
         
-        // IDs dos campos do formulário
+        // IDs dos campos do formulário (baseado nos cabeçalhos da planilha)
         const FORM_FIELDS = {
-            nome: 'entry.1332254832',
-            whatsapp: 'entry.1683986737',
-            negocio: 'entry.1728880476',
-            pontuacao: 'entry.515979609',
-            status: 'entry.1684398726',
-            q1: 'entry.1877650085',
-            q2: 'entry.1466002601',
-            q3: 'entry.1025550706',
-            q4: 'entry.1539012452',
-            q5: 'entry.2011726212',
-            q6: 'entry.1634825956',
-            q7: 'entry.335359485',
-            q8: 'entry.1218388083',
-            q9: 'entry.1583223949',
-            q10: 'entry.1904069476'
+            nome: 'entry.1332254832',           // Carinho de data | Nome Complet
+            whatsapp: 'entry.1683986737',       // Whatsapp
+            negocio: 'entry.1728880476',        // Tipo do seu neg
+            q1: 'entry.515979609',              // Seu WhatsApp Durante horário
+            q2: 'entry.1684398726',             // Você tem fotos Imagens com b
+            q3: 'entry.1877650085',             // Seu instagram/ Perfil ativo e ati
+            q4: 'entry.1466002601',             // Você sabe EXA Conhece seus c
+            q5: 'entry.1025550706',             // Tem um difere Consegue expli
+            q6: 'entry.1539012452',             // Seu perfil/site Prova social qu
+            q7: 'entry.2011726212',             // Você consegue Tem capacidad
+            q8: 'entry.1634825956',             // Tem uma oferta Desconto, brinc
+            q9: 'entry.335359485',              // Sabe quem é s Conhece o perf
+            q10: 'entry.1218388083'             // Tem tempo par Consegue dedi
         };
         // ============================================
 
@@ -647,13 +645,11 @@
             try {
                 const status = score >= 8 ? 'PRONTO' : score >= 5 ? 'QUASE LÁ' : 'PRECISA ESTRUTURAR';
                 
-                // Cria URL com todos os dados
+                // Cria URL com todos os dados (SEM pontuação e status)
                 const formData = new URLSearchParams();
                 formData.append(FORM_FIELDS.nome, userData.name);
                 formData.append(FORM_FIELDS.whatsapp, userData.phone);
                 formData.append(FORM_FIELDS.negocio, userData.business);
-                formData.append(FORM_FIELDS.pontuacao, score);
-                formData.append(FORM_FIELDS.status, status);
                 formData.append(FORM_FIELDS.q1, answers[0] ? 'SIM' : 'NÃO');
                 formData.append(FORM_FIELDS.q2, answers[1] ? 'SIM' : 'NÃO');
                 formData.append(FORM_FIELDS.q3, answers[2] ? 'SIM' : 'NÃO');
@@ -693,7 +689,12 @@
                     document.body.removeChild(iframe);
                 }, 2000);
 
-                console.log('✅ Dados enviados para Google Forms com sucesso!');
+                console.log('✅ Dados enviados para Google Forms!');
+                console.log('Nome:', userData.name);
+                console.log('WhatsApp:', userData.phone);
+                console.log('Negócio:', userData.business);
+                console.log('Pontuação (só no quiz):', score);
+                console.log('Status (só no quiz):', status);
             } catch (error) {
                 console.error('❌ Erro ao enviar dados:', error);
             }
